@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import TodoItem from "./TodoItem";
 import { useSelector, useDispatch } from "react-redux";
 import { getTodosAsync } from "../../redux/todoSlice";
+import { AppDispatch } from "../../redux/store";
 
 const TodoList = () => {
-  const dispatch = useDispatch();
-  const todos = useSelector((state) => state.todos);
+  const dispatch = useDispatch<AppDispatch>();
+  const todos = useSelector((state:{todos:Array<{id:number,title:string,completed:boolean}>}) => state.todos);
 
   useEffect(() => {
     dispatch(getTodosAsync());
@@ -14,7 +15,7 @@ const TodoList = () => {
   return (
     <ul className="mx-4 my-6 h-96 overflow-auto">
       {todos.length > 0 &&
-        todos.map((todo) => (
+        todos.map((todo:{id:number,title:string,completed:boolean}) => (
           <TodoItem
             key={todo.id}
             id={todo.id}

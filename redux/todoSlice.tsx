@@ -13,8 +13,8 @@ export const getTodosAsync = createAsyncThunk(
 
 export const addTodoAsync = createAsyncThunk(
   "todos/addTodoAsync",
-  async (payload) => {
-    const resp = await request.post("NextJS", {title: payload.title,});
+  async (payload: {id: number;title:string;complete:boolean}) => {
+    const resp = await request.post("NextJS", { title: payload.title });
     const todo = await resp.data;
     return { todo };
   }
@@ -22,17 +22,18 @@ export const addTodoAsync = createAsyncThunk(
 
 export const toggleCompleteAsync = createAsyncThunk(
   "todos/completeTodoAsync",
-  async (payload) => {
-    const resp = await request.patch(`NextJS/${payload.id}`, {completed: payload.completed,});
+  async (payload: {id: number;title:string;completed:boolean}) => {
+    const resp = await request.patch(`NextJS/${payload.id}`, {
+      completed: payload.completed,
+    });
     const todo = await resp.data;
-    console.log("🚀 ~ file: todoSlice.js ~ line 28 ~ resp", resp)
     return { todo };
   }
 );
 
 export const deleteTodoAsync = createAsyncThunk(
   "todos/deleteTodoAsync",
-  async (payload) => {
+  async (payload: {id: number;title:string;completed:boolean}) => {
     const resp = await request.delete(`NextJS/${payload.id}`);
     return { id: payload.id };
   }
@@ -42,36 +43,36 @@ export const todoSlice = createSlice({
   name: "todos",
   initialState: [],
   reducers: {
-    addTodo: (state, action) => {
-      const todo = {
+    addTodo: (state:Object[], action) => {
+      const todo: {id: number;title:string;completed:boolean} = {
         id: nanoid(),
         title: action.payload.title,
         completed: false,
       };
       state.push(todo);
     },
-    toggleComplete: (state, action) => {
-      const index = state.findIndex((todo) => todo.id === action.payload.id);
+    toggleComplete: (state:Array<{id:number,title:string,completed:boolean}>, action) => {
+      const index = state.findIndex((todo:{id:number}) => todo.id === action.payload.id);
       state[index].completed = action.payload.completed;
     },
     deleteTodo: (state, action) => {
-      return state.filter((todo) => todo.id !== action.payload.id);
+      return state.filter((todo:{id:number}) => todo.id !== action.payload.id);
     },
   },
   extraReducers: {
-    [getTodosAsync.fulfilled]: (state, action) => {
+    [getTodosAsync.fulfilled ]: (state:Array<{id:number,title:string,completed:boolean}>, action:{ payload: { todos: {id:number,title:string,completed:boolean} }}) => {
       return action.payload.todos;
     },
-    [addTodoAsync.fulfilled]: (state, action) => {
+    [addTodoAsync.fulfilled ]: (state:Object[], action:{ payload:{ todo: {id:number,title:string,completed:boolean}; }}) => {
       state.push(action.payload.todo);
     },
-    [toggleCompleteAsync.fulfilled]: (state, action) => {
+    [toggleCompleteAsync.fulfilled]: (state:Array<{id:number,title:string,completed:boolean}>, action:{ payload: { todo: {id:number,title:string,completed:boolean} }}) => {
       const index = state.findIndex(
         (todo) => todo.id === action.payload.todo.id
       );
       state[index].completed = action.payload.todo.completed;
     },
-    [deleteTodoAsync.fulfilled]: (state, action) => {
+    [deleteTodoAsync.fulfilled]: (state:Array<{id:number,title:string,completed:boolean}>, action: { payload: {id:number,title:string,completed:boolean} }) => {
       return state.filter((todo) => todo.id !== action.payload.id);
     },
   },

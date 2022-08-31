@@ -1,13 +1,14 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 const TotalCompleteItems = () => {
-  const checkTask = useSelector((state) => state.todos.length);
-  const checkComplete = useSelector((state) =>
-    state.todos.filter((todo) => todo.completed === true)
+  const checkTask = useSelector<RootState>((state) => state.todos.length);
+  const checkComplete = useSelector<RootState>((state) =>
+    state.todos.filter((todo:{completed:boolean}) => todo.completed === true)
   );
-  const checkOpen = useSelector((state) =>
-    state.todos.filter((todo) => todo.completed === false)
+  const checkOpen = useSelector<RootState>((state) =>
+    state.todos.filter((todo:{completed:boolean}) => todo.completed === false)
   );
 
   return (

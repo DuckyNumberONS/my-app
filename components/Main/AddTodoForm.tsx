@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTodoAsync } from "../../redux/todoSlice";
+import { AppDispatch } from "../../redux/store";
 
 const AddTodoForm = () => {
-  const [value, setValue] = useState("");
-  const dispatch = useDispatch();
+  const [value , setValue] = useState<string>("");
+  const dispatch = useDispatch<AppDispatch>();
 
-  const onSubmit = (e) => {
+  const onSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (value) {
-      dispatch(
+      dispatch( 
         addTodoAsync({
           title: value,
         })
