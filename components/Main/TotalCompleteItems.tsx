@@ -4,6 +4,7 @@ import { RootState } from "../../redux/store";
 
 const TotalCompleteItems = () => {
   const checkTask = useSelector<RootState>((state) => state.todos.length);
+  const todos = useSelector<RootState>((state) => state.todos)
   const checkComplete = useSelector<RootState>((state) =>
     state.todos.filter((todo:{completed:boolean}) => todo.completed === true)
   );

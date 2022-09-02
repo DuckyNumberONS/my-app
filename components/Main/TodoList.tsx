@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import TodoItem from "./TodoItem";
 import { useSelector, useDispatch } from "react-redux";
-import { getTodosAsync } from "../../redux/todoSlice";
+import { getTodoAsync } from "../../redux/todoSlice";
 import { AppDispatch } from "../../redux/store";
 
 const TodoList = () => {
@@ -9,7 +9,7 @@ const TodoList = () => {
   const todos = useSelector((state:{todos:Array<{id:number,title:string,completed:boolean}>}) => state.todos);
 
   useEffect(() => {
-    dispatch(getTodosAsync());
+    dispatch(getTodoAsync());
   }, [dispatch]);
 
   return (

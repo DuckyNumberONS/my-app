@@ -2,7 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { nanoid } from "nanoid";
 import request from "../utils/requestApi";
 
-export const getTodosAsync = createAsyncThunk(
+interface PayloadOptions {
+	id?: number;
+	title?: string;
+	Checked?: boolean;
+}
+
+export const getTodoAsync = createAsyncThunk(
   "todos/getTodosAsync",
   async () => {
     const resp = await request.get("NextJS");
@@ -44,7 +50,7 @@ export const todoSlice = createSlice({
   initialState: [],
   reducers: {
     addTodo: (state:Object[], action) => {
-      const todo: {id: number;title:string;completed:boolean} = {
+      const todo: {id: string;title:string;completed:boolean} = { 
         id: nanoid(),
         title: action.payload.title,
         completed: false,
@@ -59,23 +65,24 @@ export const todoSlice = createSlice({
       return state.filter((todo:{id:number}) => todo.id !== action.payload.id);
     },
   },
-  extraReducers: {
-    [getTodosAsync.fulfilled ]: (state:Array<{id:number,title:string,completed:boolean}>, action:{ payload: { todos: {id:number,title:string,completed:boolean} }}) => {
-      return action.payload.todos;
-    },
-    [addTodoAsync.fulfilled ]: (state:Object[], action:{ payload:{ todo: {id:number,title:string,completed:boolean}; }}) => {
-      state.push(action.payload.todo);
-    },
-    [toggleCompleteAsync.fulfilled]: (state:Array<{id:number,title:string,completed:boolean}>, action:{ payload: { todo: {id:number,title:string,completed:boolean} }}) => {
-      const index = state.findIndex(
-        (todo) => todo.id === action.payload.todo.id
-      );
-      state[index].completed = action.payload.todo.completed;
-    },
-    [deleteTodoAsync.fulfilled]: (state:Array<{id:number,title:string,completed:boolean}>, action: { payload: {id:number,title:string,completed:boolean} }) => {
-      return state.filter((todo) => todo.id !== action.payload.id);
-    },
-  },
+  extraReducers: (builder) => {
+		builder
+			.addCase(getTodoAsync.fulfilled, (state, action) => {
+				return action.payload.todos;
+			})
+			.addCase(addTodoAsync.fulfilled, (state: Object[], action: { payload: { todo: PayloadOptions; } }) => {
+				state.push(action.payload.todo);
+			})
+			.addCase(deleteTodoAsync.fulfilled, (state, action: { payload: PayloadOptions; }) => {
+				return state.filter((todo: PayloadOptions) => todo.id !== action.payload.id);
+			})
+			.addCase(toggleCompleteAsync.fulfilled, (state: Array<PayloadOptions>, action: { payload: { todo: PayloadOptions } }) => {
+				const index = state.findIndex(
+					(todo) => todo.id === action.payload.todo.id);
+				state[index].Checked = action.payload.todo.Checked;
+			})
+
+	},
 });
 
 export const { addTodo, toggleComplete, deleteTodo } = todoSlice.actions;

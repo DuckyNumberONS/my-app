@@ -7,11 +7,18 @@ const TodoItem = ({ id, title, completed }:{id:number,title:string,completed:boo
 	const dispatch = useDispatch<AppDispatch>();
 
 	const handleCheckboxClick = () => {
-		dispatch(toggleCompleteAsync({ id, completed: !completed }));
+		dispatch(toggleCompleteAsync({
+      id, completed: !completed,
+      title: ''
+    }));
 	};
 
 	const handleDeleteClick = () => {
-		dispatch(deleteTodoAsync({ id }));  
+		dispatch(deleteTodoAsync({
+      id,
+      title: '',
+      completed: false
+    }));  
 	};
 
 	return (
